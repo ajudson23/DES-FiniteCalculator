@@ -114,9 +114,7 @@ def makeFile(newText):
     with open(fileName, 'w') as file:
         file.write(newText)
 
-def bin2dec(binary):                    # DELETE Binary to decimal conversion
-
-	binary1 = binary
+def bin2dec(binary):                    
 	decimal, i, n = 0, 0, 0
 	while(binary != 0):
 		dec = binary % 10
@@ -125,7 +123,7 @@ def bin2dec(binary):                    # DELETE Binary to decimal conversion
 		i += 1
 	return decimal
 
-def dec2bin(num):                       # DELETE Decimal to binary conversion
+def dec2bin(num):                       
 	res = bin(num).replace("0b", "")
 	if(len(res) % 4 != 0):
 		div = len(res) / 4
@@ -191,9 +189,11 @@ def encrypt(plaintext, keyBinary, numRounds):
 	return cipherText
 
 def keyGenerator(key, numRounds):
-    key = bin(int(key, 16))[2:]                     # covert hex to binary
-    key = permute(key, permutatedChoice_1, 56)      # input 64bit key & output 56 bit key, use the PC1 table to create new key
-    # split key into two halves, i.e., C0 and D0
+    key = bin(int(key, 16))[2:]  # Convert hex to binary
+    key = key.zfill(64)  # Ensure that the binary key is 64 bits long
+    key = permute(key, permutatedChoice_1, 56)  # Use the PC1 table to create a new key
+    
+    # Split key into two halves, i.e., C0 and D0
     left = key[0:28] 
     right = key[28:56] 
     keyBinary = []
