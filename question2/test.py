@@ -17,8 +17,7 @@ def main_test(num_tests=1000, num_rounds=16, key_hex="FFFFFFFFFFFFFFFE"):
         start_time = time.time()
 
         plaintext_hex = generate_random_hex_string()
-        cipher = DES_judson.encrypt(plaintext_hex, roundKeys, num_rounds)
-        print(cipher)
+        DES_judson.encrypt(plaintext_hex, roundKeys, num_rounds)
         end_time = time.time()
         encryption_times.append(end_time - start_time)
 

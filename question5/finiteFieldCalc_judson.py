@@ -50,7 +50,11 @@ def multiply(functF, functG):
         functG = functG << 1                # left shift by 1
     return bin(result)[2:]                  # covert to binary & take of first two values f/ conversion
 
-
+'''
+calculates  multiplicativeInverse of g(x) in GF(2^8). 
+GF(2^8) is represented by an irreducible polynomial
+the multiplicativeInverse is found using the extended Euclidean algorithm
+'''
 def find_multiplicative_inverse_GF28(a):
     r, prev_r = 0x11B, a
     t, prev_t = 0, 1
@@ -68,6 +72,9 @@ def find_multiplicative_inverse_GF28(a):
     #return prev_t
     return format(prev_t, '08b')
 
+'''
+This function takes f(x) & g(x). It calculates the inverse of f(g). Then it multiplies f(x) by g(x)^-1
+'''
 def divide(functF, functG):
     inverse_b = find_multiplicative_inverse_GF28(int(functG, 2))
     return multiply(functF, inverse_b)
@@ -93,4 +100,3 @@ elif sign == '/':
 
 if result != '-1':
     print("Result:", result)
-    # go to output function
