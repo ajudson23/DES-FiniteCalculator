@@ -19,6 +19,11 @@ def readFile():
         print(f"File '{filePath}' not found.")
         return None, None, None
 
+def makeFile(newText):
+    fileName = input("Filename: ") + ".txt"
+    with open(fileName, 'w') as file:
+        file.write(newText)
+
 ''' 
     This function XORs the two functions using the "^", we use an XOR, since we are not carrying any binary values.
     Adding & subtracting have the same procedure and output.
@@ -56,28 +61,33 @@ GF(2^8) is represented by an irreducible polynomial
 the multiplicativeInverse is found using the extended Euclidean algorithm
 '''
 def find_multiplicative_inverse_GF28(a):
-    r, prev_r = 0x11B, a
-    t, prev_t = 0, 1
-    # perform extended Euclidean
-    while prev_r != 0:
-        quotient = r // prev_r
-        r, prev_r = prev_r, r - quotient * prev_r
-        t, prev_t = prev_t, t - quotient * prev_t
+    r = a
+    previousR = 0x11B # P(x) = x^8 + x^4 + x^3 + x + 1 
+    t, previousT = 0, 1
+    # Extended Euclidean:
+    while previousR != 0:
+        quotient = r // previousR
+        r, previousR = previousR, r - quotient * previousR
+        t, previousT = previousT, t - quotient * previousT
     # if r is greater than 1 then 'a' is not invertible in GF(2^8)
     if r > 1:
         raise ValueError("Element is not invertible in GF(2^8).")
     # check if less than 0, add 256 if negative
-    if prev_t < 0:
-        prev_t += 256
-    #return prev_t
-    return format(prev_t, '08b')
+    if previousT < 0:
+        previousT += 256
+    return format(previousT, '08b')
 
 '''
 This function takes f(x) & g(x). It calculates the inverse of f(g). Then it multiplies f(x) by g(x)^-1
 '''
 def divide(functF, functG):
     inverse_b = find_multiplicative_inverse_GF28(int(functG, 2))
-    return multiply(functF, inverse_b)
+    result = multiply(functF, inverse_b)
+    print(result, "------")
+    if len(result) < 8:
+        num_zeros = 8 - len(result)
+        result = "0" * num_zeros + result
+    return result
 
 
 # main
@@ -100,3 +110,6 @@ elif sign == '/':
 
 if result != '-1':
     print("Result:", result)
+    userAnswer = input("Would you like to write this cipher to a file? \nType '1' (Yes):")
+    if userAnswer == '1':
+        makeFile(result)
