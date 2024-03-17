@@ -1,8 +1,4 @@
 import os
-import time
-import random
-import numpy as np
-import matplotlib.pyplot as plt
 
 # TABLES needed for DES BELOW
 # IT // use for key prior to first round, takes 64 bit key and takes out every 8th bit out & rearranges values
@@ -216,7 +212,6 @@ def keyGenerator(key, numRounds):
 
 # main
 print("\n\n ************** DES Encryption Program **************")
-# main
 numRounds, key, plaintext = readFile()
 keyBinary = keyGenerator(key, numRounds)
 cipherText = encrypt(plaintext, keyBinary, numRounds)

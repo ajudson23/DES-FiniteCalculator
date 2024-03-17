@@ -100,24 +100,7 @@ sbox = [[[14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7],
 		[7, 11, 4, 1, 9, 12, 14, 2, 0, 6, 10, 13, 15, 3, 5, 8],
 		[2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0, 3, 5, 6, 11]]]
 
-def readFile():
-	fileName = input("\n\nInput your test file: ")
-	filePath = os.path.abspath(fileName)
-	if os.path.exists(filePath):
-		with open(filePath, 'r') as file:
-			rounds = int(file.readline().strip())
-			key = file.readline().strip()
-			plaintext = file.readline().strip()
-			return rounds, key, plaintext
-	else:
-		print(f"File '{filePath}' not found.")
-		return None, None, None
 		
-def makeFile(newText):
-    fileName = input("Filename: ") + ".txt"
-    with open(fileName, 'w') as file:
-        file.write(newText)
-
 def bin2dec(binary):                    
 	decimal, i, n = 0, 0, 0
 	while(binary != 0):
@@ -193,7 +176,6 @@ def encrypt(plaintext, keyBinary, numRounds):
 		cipherText = permute(cipherText, inverseInitPerm, 64)          # Final permutation: final rearranging of bits to get cipher text
 	return cipherText
 
-
 def keyGenerator(key, numRounds):
 	key = bin(int(key, 16))[2:]  # Convert hex to binary
 	key = key.zfill(64)  # Ensure that the binary key is 64 bits long
@@ -213,15 +195,34 @@ def keyGenerator(key, numRounds):
 		keyBinary.append(round_key)
 	return keyBinary
 
+def generateRandomHex(length=16):
+    # Generate a random hex string of the specified length.
+    return ''.join(random.choice('0123456789ABCDEF') for _ in range(length))
 
-# main
-print("\n\n ************** DES Encryption Program **************")
-# main
-numRounds, key, plaintext = readFile()
-keyBinary = keyGenerator(key, numRounds)
-cipherText = encrypt(plaintext, keyBinary, numRounds)
-cipherText = hex(int(cipherText, 2))[2:].zfill(16).upper()
-print("Ciphertext : ", cipherText)
-userAnswer = input("Would you like to write this cipher to a file? \nType '1' (Yes):")
-if userAnswer == '1':
-    makeFile(cipherText)
+
+num_rounds=16
+key_hex="1234567891234567"
+encryptionTimes = []  # List to store the time taken for each encryption
+total_time_start = time.time()
+roundKeys = keyGenerator(key_hex, num_rounds)
+for i in range(1000):
+    start_time = time.time()
+    plaintext_hex = generateRandomHex()
+    encrypt(plaintext_hex, roundKeys, num_rounds)
+    end_time = time.time()
+    encryptionTimes.append(end_time - start_time)
+total_time_end = time.time() 
+total_time = total_time_end - total_time_start
+average_time = np.mean(encryptionTimes)
+print(f"Average encryption time: {average_time:.5f} seconds")
+print(f"Total time for 1000 encryptions: {total_time:.5f} seconds")
+
+# Plot the empirical CDF
+plt.figure(figsize=(8, 6))
+plt.hist(encryptionTimes, bins=100, cumulative=True, density=True, histtype='step', color='red', label='Empirical CDF')
+plt.xlabel('Encryption Time (seconds)')
+plt.ylabel('CDF')
+plt.title('Empirical Cumulative Distribution Function (CDF) of DES Encryption Time')
+plt.grid(True)
+plt.legend()
+plt.show()
