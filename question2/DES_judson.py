@@ -97,17 +97,17 @@ sbox = [[[14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7],
 		[2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0, 3, 5, 6, 11]]]
 
 def readFile():
-        fileName = input("\n\nInput your test file: ")
-        filePath = os.path.abspath(fileName)
-        if os.path.exists(filePath):
-            with open(filePath, 'r') as file:
-                rounds = int(file.readline().strip())
-                key = file.readline().strip()
-                plaintext = file.readline().strip()
-                return rounds, key, plaintext
-        else:
-            print(f"File '{filePath}' not found.")
-            return None, None, None
+	fileName = input("\n\nInput your test file: ")
+	filePath = os.path.abspath(fileName)
+	if os.path.exists(filePath):
+		with open(filePath, 'r') as file:
+			rounds = int(file.readline().strip())
+			key = file.readline().strip()
+			plaintext = file.readline().strip()
+			return rounds, key, plaintext
+	else:
+		print(f"File '{filePath}' not found.")
+		return None, None, None
 		
 def makeFile(newText):
     fileName = input("Filename: ") + ".txt"
@@ -136,6 +136,9 @@ def dec2bin(num):
 # Permute function to rearrange the bits
 def permute(key, permChoice, length_n):
 	permutation = ""
+	print(permChoice)
+	print(key)
+	print(length_n)
 	for i in range(0, length_n):
 		permutation = permutation + key[permChoice[i] - 1]
 	return permutation
@@ -189,24 +192,26 @@ def encrypt(plaintext, keyBinary, numRounds):
 	return cipherText
 
 def keyGenerator(key, numRounds):
-    key = bin(int(key, 16))[2:]  # Convert hex to binary
-    key = key.zfill(64)  # Ensure that the binary key is 64 bits long
-    key = permute(key, permutatedChoice_1, 56)  # Use the PC1 table to create a new key
-    
-    # Split key into two halves, i.e., C0 and D0
-    left = key[0:28] 
-    right = key[28:56] 
-    keyBinary = []
-    # generate a list of keys for each round
-    for i in range(0, numRounds):
-        # Shifting the bits by nth shifts by checking from the shift table
-        left = shiftLeft(left, shiftTable[i])
-        right = shiftLeft(right, shiftTable[i])
-        combinedHalves = left + right  # concatenate strings together
-        # Compression of key from 56 to 48 bits
-        round_key = permute(combinedHalves, permutatedChoice_2, 48)
-        keyBinary.append(round_key)
-    return keyBinary
+	print(key, "OG, hex")
+	key = bin(int(key, 16))[2:]  # Convert hex to binary
+	print(key, "hex-> binary")
+	key = key.zfill(64)  # Ensure that the binary key is 64 bits long
+	print(key, "zfil64")
+	key = permute(key, permutatedChoice_1, 56)  # Use the PC1 table to create a new key
+	# Split key into two halves, i.e., C0 and D0
+	left = key[0:28] 
+	right = key[28:56] 
+	keyBinary = []
+	# generate a list of keys for each round
+	for i in range(0, numRounds):
+		# Shifting the bits by nth shifts by checking from the shift table
+		left = shiftLeft(left, shiftTable[i])
+		right = shiftLeft(right, shiftTable[i])
+		combinedHalves = left + right  # concatenate strings together
+		# Compression of key from 56 to 48 bits
+		round_key = permute(combinedHalves, permutatedChoice_2, 48)
+		keyBinary.append(round_key)
+	return keyBinary
 
 
 # main
