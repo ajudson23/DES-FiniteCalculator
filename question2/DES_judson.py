@@ -136,9 +136,6 @@ def dec2bin(num):
 # Permute function to rearrange the bits
 def permute(key, permChoice, length_n):
 	permutation = ""
-	print(permChoice)
-	print(key)
-	print(length_n)
 	for i in range(0, length_n):
 		permutation = permutation + key[permChoice[i] - 1]
 	return permutation
@@ -163,7 +160,7 @@ def xor(bitStringA, bitStringB):
 
 
 def encrypt(plaintext, keyBinary, numRounds):
-	plaintext = bin(int(plaintext, 16))[2:]
+	plaintext = bin(int(plaintext, 16))[2:].zfill(64)
 	# Initial Permutation
 	plaintext = permute(plaintext, initialPermutation, 64)
 	left = plaintext[0:32]                  	# Splitting
@@ -188,15 +185,13 @@ def encrypt(plaintext, keyBinary, numRounds):
 			left, right = right, left
 		# print("Round ", i + 1, " ", hex(int(left, 2))[2:].upper()," ", hex(int(right, 2))[2:].upper(), " ", keyHex[i]) 
 	cipherText = left + right                                      # Concatenate cipherText
-	cipherText = permute(cipherText, inverseInitPerm, 64)          # Final permutation: final rearranging of bits to get cipher text
+	if numRounds >= 16:
+		cipherText = permute(cipherText, inverseInitPerm, 64)          # Final permutation: final rearranging of bits to get cipher text
 	return cipherText
 
 def keyGenerator(key, numRounds):
-	print(key, "OG, hex")
 	key = bin(int(key, 16))[2:]  # Convert hex to binary
-	print(key, "hex-> binary")
 	key = key.zfill(64)  # Ensure that the binary key is 64 bits long
-	print(key, "zfil64")
 	key = permute(key, permutatedChoice_1, 56)  # Use the PC1 table to create a new key
 	# Split key into two halves, i.e., C0 and D0
 	left = key[0:28] 
@@ -220,7 +215,7 @@ keyBinary = keyGenerator(key, numRounds)
 
 print(" ************** Encryption **************")
 cipherText = encrypt(plaintext, keyBinary, numRounds)
-cipherText = hex(int(cipherText, 2))[2:].upper()
+cipherText = hex(int(cipherText, 2))[2:].zfill(16).upper()
 print("Ciphertext : ", cipherText)
 userAnswer = input("Would you like to write this cipher to a file? \nType '1' (Yes):")
 if userAnswer == '1':

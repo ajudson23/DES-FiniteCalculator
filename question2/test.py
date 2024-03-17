@@ -11,18 +11,19 @@ def generate_random_hex_string(length=16):
 
 
 def main_test(num_tests=1000, num_rounds=16, key_hex="FFFFFFFFFFFFFFFE"):
-    encryption_times = []  # List to store the time taken for each encryption
+    encryption_time = []  # List to store the time taken for each encryption
     roundKeys = DES_judson.keyGenerator(key_hex, num_rounds)
-    for _ in range(num_tests):
+    for i in range(num_tests):
         start_time = time.time()
 
         plaintext_hex = generate_random_hex_string()
         DES_judson.encrypt(plaintext_hex, roundKeys, num_rounds)
         end_time = time.time()
-        encryption_times.append(end_time - start_time)
+        encryption_time.append(end_time - start_time)
+        print(f"Test {i+1}: Encryption time: {encryption_time:.5f} seconds")
 
     # Calculate the average time
-    average_time = np.mean(encryption_times)
+    average_time = np.mean(encryption_time)
     print(f"Average encryption time: {average_time:.5f} seconds")
 
  
